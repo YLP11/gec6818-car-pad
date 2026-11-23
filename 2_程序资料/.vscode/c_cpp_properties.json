@@ -1,0 +1,17 @@
+{
+    "version": 4,
+    "configurations": [
+        {
+            "name": "C (Embedded Linux)",
+            "includePath": [
+                "${workspaceFolder}/inc",
+                "${workspaceFolder}/src"
+            ],
+            "defines": [],
+            "compilerPath": "D:/cygwin64/cygwin64/bin/gcc.exe",
+            "cStandard": "c11",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "linux-gcc-x64"
+        }
+    ]
+}

@@ -1,0 +1,11 @@
+{
+    "C_Cpp.default.compilerPath": "D:/cygwin64/cygwin64/bin/gcc.exe",
+    "C_Cpp.default.intelliSenseMode": "linux-gcc-x64",
+    "C_Cpp.default.cStandard": "c11",
+    "C_Cpp.intelliSenseEngine": "default",
+    "C_Cpp.hover.enabled": true,
+    "C_Cpp.hoverShowDeclaredType": true,
+    "editor.hover.enabled": "on",
+    "editor.hover.delay": 300,
+    "cmake.sourceDirectory": "D:/share/5_车载娱乐小平板/src"
+}
