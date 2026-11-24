@@ -1,4 +1,5 @@
 #include "../inc/game.h"
+#include "../log/log.h"
 #include "../inc/bmp.h"
 #include "../inc/touch.h"
 #include <pthread.h>
@@ -150,6 +151,7 @@ void Gomoku_UI(void)
     int x0, y0, x1, y1;
     int turn = 1; // 1黑先手 2白
     int over = 0;
+    log_info("进入五子棋");
     memset(board, 0, sizeof(board));
     Gomoku_Show(over, turn);
     while (1)
@@ -370,6 +372,7 @@ void Snake_UI(void)
     pthread_t tid;
     int acc = 0, prev_over = 0, prev_pause = 0;
     g_exit = 0;
+    log_info("进入贪吃蛇");
     srand(time(NULL));
     Snake_Reset();
     lcd->draw_rect(0, 0, 800, 480, COL_BG);

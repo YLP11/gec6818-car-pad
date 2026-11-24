@@ -1,4 +1,5 @@
 #include "../inc/ui_main.h"
+#include "../log/log.h"
 #include "../inc/bmp.h"
 #include "../inc/touch.h"
 #include "../inc/album.h"
@@ -137,6 +138,7 @@ int Main_UI(void)
                 //主动停止时间线程
                 pthread_cancel(tid);
                 pthread_join(tid,NULL);
+                log_info("用户登出");
                 return 0;    //登出，main.c里重新调Login_Register登录注册函数
             }
         }
@@ -148,6 +150,7 @@ int Main_UI(void)
                 //先停时间线程：不然动画播放期间它每秒还在盖时间条，画面会闪
                 pthread_cancel(tid);
                 pthread_join(tid,NULL);
+                log_info("用户关机:停播放器,播关机动画,进程退出");
                 //关机：先停掉后台播放器，再播关机动画视频
                 system("killall madplay mplayer 2>/dev/null");
                 system("mplayer -vo fbdev -noconsolecontrols -quiet "

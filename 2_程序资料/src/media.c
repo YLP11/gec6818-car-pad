@@ -1,6 +1,7 @@
 // 音视频：音乐用 madplay 后台播放，视频用 mplayer 直播到 framebuffer
 // 两者都是"后台进程 + SIGSTOP/SIGCONT 暂停 + SIGKILL 停止"的管理方式
 #include "../inc/media.h"
+#include "../log/log.h"
 #include "../inc/bmp.h"
 #include "../inc/touch.h"
 #include <stdio.h>
@@ -10,7 +11,7 @@
 #include <pthread.h>
 #include <signal.h>
 
-// ==================== 音乐 ====================
+// 音乐
 
 static const char *g_files[SONG_NUM] = {
     MUSIC_DIR "/song1.mp3", // 太聪明 - 陈绮贞
@@ -63,6 +64,7 @@ static void Play(int i)
     cur = i;
     playing = 1;
     paused = 0;
+    log_info("播放音乐:%s", g_files[i]);
 }
 
 // 播放/暂停切换：没在放就开始放当前的歌
@@ -79,6 +81,7 @@ static void Toggle(void)
     else // 万一没拿到进程号，退回 killall（数字信号最通用）
         system(paused ? "killall -18 madplay 2>/dev/null"
                       : "killall -19 madplay 2>/dev/null");
+    log_info("音乐%s", paused ? "继续" : "暂停");
     paused = !paused;
 }
 
@@ -91,6 +94,7 @@ static void Stop(void)
     g_mad_pid = -1;
     playing = 0;
     paused = 0;
+    log_info("停止播放");
 }
 
 // 上一首/下一首切歌：只换歌不播放，停在未播放状态，点播放键才开始放
@@ -144,7 +148,7 @@ void Music_UI(void)
             Show_Page();
             continue;
         }
-        // 底部热区整条都响应
+        // 点击播放/暂停/上一首/下一首
         if (y0 >= BTN_BAND_Y && x0 >= BTN_PREV_L && x0 <= BTN_NEXT_R)
         {
             if (x0 < BTN_PREV_R) // 上一首
@@ -168,7 +172,7 @@ void Music_UI(void)
     }
 }
 
-// ==================== 视频 ====================
+// 视频
 
 static pid_t g_play_pid = -1; // mplayer 进程号：直接对它发信号，比 killall 可靠
 
@@ -199,9 +203,10 @@ static void Player_Start(int i)
             g_play_pid = pid;
         pclose(pp);
     }
+    log_info("播放视频:%s", g_names[i]);
 }
 
-// 暂停/继续：SIGSTOP/SIGCONT 让画面和声音一起停走，天然同步（内核级信号必定生效）
+// 暂停/继续：SIGSTOP/SIGCONT 让画面和声音一起停走
 static void Player_Pause(int pause)
 {
     if (g_play_pid > 0)
@@ -236,7 +241,7 @@ static void Play_Page(int i)
             Player_Start(i);
             sleep(1);
         }
-        // 单击：暂停并弹出菜单（画面声音一起停，视频冻结后菜单不会被盖掉）
+        // 单击：暂停并弹出菜单
         else if (dx < 40 && dx > -40 && dy < 40 && dy > -40)
         {
             int done = 0;
@@ -251,6 +256,7 @@ static void Play_Page(int i)
                     done = 1; // 继续播放
                 else if (x0 >= PMENU_EX_L - 12 && x0 <= PMENU_EX_R + 12 && y0 >= PMENU_BTN_Y0 - 10 && y0 <= PMENU_BTN_Y1 + 10)
                 {
+                    log_info("退出视频:%s", g_names[i]);
                     Player_Stop();
                     return; // 退出回列表
                 }
@@ -291,7 +297,7 @@ void Video_UI(void)
         int dx = x1 - x0, dy = y1 - y0;
         if (dx * dx + dy * dy >= 200) // 滑动不响应
             continue;
-        // 左上角返回（热区90x60，和相册一致，避开电阻屏贴边盲区；按下点判定）
+        // 左上角返回
         if (x0 < 90 && y0 < 60)
             return;
         // 点条目：进入播放页（按下点判定）

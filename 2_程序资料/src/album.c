@@ -1,4 +1,5 @@
 #include "../inc/album.h"
+#include "../log/log.h"
 #include "../inc/bmp.h"
 #include "../inc/touch.h"
 #include <stdio.h>
@@ -216,6 +217,7 @@ static void Photo_View(int idx)
                     char t[128];
                     Thumb_Path(g_full[idx], t);
                     // 大图小图都删除
+                    log_info("删除照片:%s", g_full[idx]);
                     remove(g_full[idx]);
                     remove(t);
                     // 更新存放大图的数组
